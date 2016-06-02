@@ -92,8 +92,16 @@ void Capture::openFile(const std::string& file_path)
 
 bool Capture::capture()
 {
-  if (cap_.read(bridge_.image))
+  cap_ >> bridge_.image;
+  if (bridge_.image.empty())
   {
+    cap_.set(CV_CAP_PROP_POS_FRAMES, 0);
+    cap_ >> bridge_.image;
+  }
+
+  if (!bridge_.image.empty())
+  {
+
     ros::Time now = ros::Time::now();
     bridge_.encoding = enc::BGR8;
     bridge_.header.stamp = now;
